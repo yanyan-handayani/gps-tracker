@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map</title>
+    {% load leaflet_tags %}
+    {% leaflet_js %}
+    {% leaflet_css %}
+</head>
+<body>
+    <h1>Map</h1>
+    <div id="map" style="height: 500px;"></div>
+
+    <script>
+        const map = L.map('map').setView([{{ LEAFLET_CONFIG.DEFAULT_CENTER.0 }}, {{ LEAFLET_CONFIG.DEFAULT_CENTER.1 }}], {{ LEAFLET_CONFIG.DEFAULT_ZOOM }});
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+        }).addTo(map);
+        const locations = {{ locations|safe }};
+        locations.features.forEach(feature => {
+            if (feature.type == 'Feature') {
+                L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]])
+                .addTo(map)
+                .bindPopup(feature.properties.name);   
+            }
+        });
+    </script>
+</body>
+</html>
